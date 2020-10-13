@@ -20,13 +20,13 @@ def predict(Theta1, Theta2, X, Y, Accuracy=False):
     HiddenLayer, Output_layer = Optimization.FFProp(Theta1, Theta2, X)
 
     prediction = mat.argmax(Output_layer, axis=1) + 1  # add one because we have label from 1 to 10 but argument or max
-    # index we will get will be from 0 to 9 so if original out put is 10.
-    # we will get 9.
+    # index we will get will be from 0 to 9 so if original output is 10 we will get 9 That will give the wrong
+    # Prediction and 0 accuracy.
 
     if Accuracy:
         # calculate accuracy
-        temp = mat.subtract(mat.c_[prediction], Y)
-        accuracy = ((len(mat.where(temp == 0)[0])) / len(Y)) * 100
+        error = mat.subtract(mat.c_[prediction], Y)  # subtract the Prediction from Original Output
+        accuracy = ((len(mat.where(error == 0)[0])) / len(Y)) * 100  # Calculate where error is 0.
         return prediction, accuracy
 
     return prediction

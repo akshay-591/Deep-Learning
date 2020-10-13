@@ -46,7 +46,7 @@ def Loss(param, X, Y, inputUnits, hiddenUnits, outputUnits, lamb):
     loss1 = mat.zeros((outputUnits, 1))
 
     for i in range(outputUnits):
-        new_output = mat.where(Y == i + 1, 1, 0)  # where Y == i replace with 1 and rest of the value to 0
+        new_output = mat.where(Y == i+1, 1, 0)  # where Y == i replace with 1 and rest of the value to 0
 
         # Loss when when Y=1
         loss1[i, :] = mat.dot(-new_output.transpose(), mat.log(mat.c_[output[:, i]]))
@@ -128,7 +128,7 @@ def BackProp(param, X, Y, inputUnits, hiddenUnits, outputUnits, lamb):
     # calculates small delta values (errors) on each output unit.
     small_delta_output = mat.zeros((X.shape[0], outputUnits))
     for i in range(outputUnits):
-        new_output = mat.where(Y == i + 1, 1, 0)
+        new_output = mat.where(Y == i+1, 1, 0)
         small_delta_output[:, i] = mat.subtract(mat.c_[output[:, i]], new_output).flatten()
 
     delta_output = mat.dot(small_delta_output.transpose(), Hidden_output)
