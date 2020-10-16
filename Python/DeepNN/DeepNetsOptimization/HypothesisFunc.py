@@ -20,7 +20,6 @@ def predict(x, theta, Sigmoid=False):
     else:
         prediction = mat.dot(x, theta)
     if Sigmoid:
-
         prediction = mat.divide(1, mat.add(1, mat.exp(-prediction)))
 
     return prediction

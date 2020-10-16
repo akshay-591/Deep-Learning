@@ -37,8 +37,6 @@ class Learn:
             numHiddenLayers = 1
         if InputLayerUnits is None:
             InputLayerUnits = Input.shape[1]  # Take the Column of Input as InputLayerUnits
-        """if maxIter is None:
-            maxIter = 50"""
         if lamb is None:
             lamb = 0
         if AutoParameters:
