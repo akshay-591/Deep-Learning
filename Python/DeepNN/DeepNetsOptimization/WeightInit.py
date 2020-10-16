@@ -21,6 +21,8 @@ def init(InputUnits, OutputUnits, numHiddenLayer=1, HiddenUnits=None):
         HiddenUnit = []
     elif isinstance(HiddenUnits, int):
         HiddenUnit = [HiddenUnits]
+    else:
+        HiddenUnit = HiddenUnits
 
     # for InputLayer
 
@@ -29,7 +31,7 @@ def init(InputUnits, OutputUnits, numHiddenLayer=1, HiddenUnits=None):
 
     if numHiddenLayer > 1:
         for i in range(numHiddenLayer):
-            if i < numHiddenLayer:
+            if i < numHiddenLayer-1:
                 parameters = Compute(HiddenUnit[i], HiddenUnit[i + 1])
                 allWeights = mat.r_[allWeights, parameters.flatten()]
             else:

@@ -4,47 +4,60 @@ This file Contains Method which will debug the DeepNetsOptimization Functions Us
 
 import numpy as mat
 from DebuggingTools import WeightsDebug, TestNumericalGradient
-from DeepNetsOptimization import LossFunction,BackPropagation
+from DeepNetsOptimization import LossFunction, BackPropagation
 
 
-def debug(lamb=0):
+def debug(InputUnits=None, OutputUnits=None, numHiddenLayer=None, HiddenLayerUnits=None, numExample=None, lamb=None):
     """
     This method will generate some random data and and Calculate Gradients or Derivative of Function Numerically and
-    Analytical both.
+    Analytical both.User either Can feed in there Input for Generating random data or Use the default values.This
+    Methods are designed in a way that Input matrix have Examples in row and features in Columns.
 
-    :param lamb: Regularization parameter By default it is 0.
+    :param InputUnits: Number of Units in Input Layer. By default it is 6.
+    :param OutputUnits: Number of Classes or Number of Units in Output Layer.By default it is 5.
+    :param numHiddenLayer: Number of Hidden Layers.By default it is 1.
+    :param HiddenLayerUnits: Number of Hidden Layer Units if passing more than 1 Layer data then use the List[].By
+                             Default it will be 5 for every layers.
+    :param numExample: Number of examples By default it is 5
+    :param lamb: Regularization parameter By default it will be 0.
     :return: Numerical Gradients , Analytical Gradients and difference/error.
     """
 
-    # define some parameters for temp data
-    HiddenLayer = 1
-    inLayerSize = 6
-    HiddenLayerUnits = 5
-    numClasses = 4
-    examples = 5
+    # Check and define some parameters for Random Data
+    if numHiddenLayer is None:
+        numHiddenLayer = 1
+    if InputUnits is None:
+        InputUnits = 6
+    if numExample is None:
+        numExample = 5
+    if OutputUnits is None:
+        OutputUnits = 4
+    if HiddenLayerUnits is None:
+        HiddenLayerUnits = []
+        for i in range(numHiddenLayer):  # this loop is to tackle the situation where numHidden layer is passed but
+            # HiddenLayerUnits is None.
+            HiddenLayerUnits.append(5)
+    if lamb is None:
+        lamb = 0
 
     # Generate some Weight parameters
-    layer1_param = WeightsDebug.generate(HiddenLayerUnits, inLayerSize)
-    layer2_param = WeightsDebug.generate(numClasses, HiddenLayerUnits)
+    param = WeightsDebug.init(InputUnits, OutputUnits, numHiddenLayer, HiddenLayerUnits)
 
     # Generate some input and output data
-    X = WeightsDebug.generate(examples, inLayerSize - 1)
-    Y = 1 + mat.reshape(mat.arange(start=1, stop=examples + 1, step=+1), (examples, 1)) % numClasses
-
-    # zip parameters
-    param = mat.r_[layer1_param.flatten(), layer2_param.flatten()]
-
+    X = WeightsDebug.generate(numExample, InputUnits - 1)
+    Y = 1 + mat.reshape(mat.arange(start=1, stop=numExample + 1, step=+1), (numExample, 1)) % OutputUnits
 
     # Calculates numerical gradients
 
     numerical_values = TestNumericalGradient.NumGrad(function=LossFunction.Loss,
                                                      theta=param,
-                                                     parameters=(X, Y, inLayerSize, numClasses, HiddenLayer,
-                                                                 HiddenLayerUnits , lamb))
+                                                     parameters=(X, Y, InputUnits, OutputUnits, numHiddenLayer,
+                                                                 HiddenLayerUnits, lamb))
 
     # Calculates Analytical gradients
 
-    Analytical_values = BackPropagation.BackProp(param, X, Y, inLayerSize, numClasses, HiddenLayer, HiddenLayerUnits, lamb)
+    Analytical_values = BackPropagation.BackProp(param, X, Y, InputUnits, OutputUnits, numHiddenLayer, HiddenLayerUnits,
+                                                 lamb)
 
     # calculate difference
     mat_a = mat.subtract(numerical_values, Analytical_values)
@@ -56,6 +69,6 @@ def debug(lamb=0):
     print("\nNumerical Calculated Gradients = \n", numerical_values)
     print("\nAnalytical Calculated Gradients = \n", Analytical_values)
     print("\ndifference = ", diff)
-    print("\nif the both the Values are almost same and Difference is less than 1e-9 than test is Successful")
+    print("\nif the both the Values are almost same and Difference  is less than 1e-9 than test is Successful.")
 
     return numerical_values, Analytical_values, diff

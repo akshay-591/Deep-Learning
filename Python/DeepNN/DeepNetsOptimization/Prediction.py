@@ -6,11 +6,13 @@ import numpy as mat
 from DeepNetsOptimization import LossFunction, Reshape
 
 
-def predict(model, X, Accuracy=False):
+def predict(model, X, Y=None, Accuracy=False):
     """
     This method calculates prediction and accuracy of the model.
 
+
     :param X: Input
+    :param Y: Output if None will be considered what is provided in the 'model' Container.
     :param model: Container Containing all the Information. Like Number of Neurons in Layers and number of Hidden Layers
                   and Learned weights.
     :param Accuracy: if True will be calculated for the model.
@@ -28,9 +30,11 @@ def predict(model, X, Accuracy=False):
     # Prediction and 0 accuracy.
 
     if Accuracy:
+        if Y is None:
+            Y = model.Y
         # calculate accuracy
-        error = mat.subtract(mat.c_[prediction], model.Y)  # subtract the Prediction from Original Output
-        accuracy = ((len(mat.where(error == 0)[0])) / len(model.Y)) * 100  # Calculate where error is 0.
+        error = mat.subtract(mat.c_[prediction], Y)  # subtract the Prediction from Original Output
+        accuracy = ((len(mat.where(error == 0)[0])) / len(Y)) * 100  # Calculate where error is 0.
         return prediction, accuracy
 
     return prediction

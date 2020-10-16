@@ -37,8 +37,8 @@ class Learn:
             numHiddenLayers = 1
         if InputLayerUnits is None:
             InputLayerUnits = Input.shape[1]  # Take the Column of Input as InputLayerUnits
-        if maxIter is None:
-            maxIter = 50
+        """if maxIter is None:
+            maxIter = 50"""
         if lamb is None:
             lamb = 0
         if AutoParameters:
@@ -64,7 +64,7 @@ class Learn:
         self.accuracy = accuracy
 
 
-def optimize_grad(param, maxiter, args=()):
+def optimize_grad(param, maxiter=None, args=()):
     """
             This methods Uses built in Conjugate Gradient method for optimization.
 
@@ -73,7 +73,14 @@ def optimize_grad(param, maxiter, args=()):
             :param args: rest of the parameters for ex- Regularization parameter or Output etc.
             :return: Optimized parameters.
             """
-    result = optimize.minimize(fun=Loss,
+    if maxiter is None:
+        result = optimize.minimize(fun=Loss,
+                                   x0=param,
+                                   args=args,
+                                   method='CG',
+                                   jac=BackProp)
+    else:
+       result = optimize.minimize(fun=Loss,
                                x0=param,
                                args=args,
                                method='CG',
