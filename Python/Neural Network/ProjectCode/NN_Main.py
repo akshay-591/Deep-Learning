@@ -79,5 +79,3 @@ learned_weight1, learned_weight2 = Learn.start(all_param, 50, X, Y, input_layer_
 prediction, accuracy = Prediction.predict(learned_weight1, learned_weight2,
                                           X, Y, Accuracy=True)
 print("Model Accuracy is = ", accuracy)
-
-

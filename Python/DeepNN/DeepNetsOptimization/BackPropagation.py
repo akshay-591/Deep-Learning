@@ -53,13 +53,13 @@ def BackProp(param, X, Y, inputUnits, outputUnits, numHiddenLayer, numHiddenUnit
                 small_delta_output[:, j] = mat.subtract(mat.c_[output[:, j]], new_output).flatten()
 
             # Store the delta values which will be useful in next layer calculation (we are In Backward Direction)
+            small_delta_output = mat.multiply(1/total_example, small_delta_output)
             small_delta_previous.update({"smalldelta": small_delta_output})
 
             # Compute the Capital delta means multiply to the Input Coming in the Layer Which is Output From
             # Last Hidden Layer.
 
             delta_output = mat.dot(small_delta_output.transpose(), Layer_outputs['Hidden_outputs' + str(i - 1)])
-            delta_output = mat.multiply(1 / total_example, delta_output)
 
             # regularization
             reg1 = mat.multiply(lamb / total_example,
@@ -147,8 +147,6 @@ def CommonCodeBackProp(i, OutPut, Input, PreviousDelta, weights, numTrace, deriv
 
     # Compute the Capital delta means multiply to the Input.
     delta_Hidden = mat.dot(small_delta_Hidden.transpose(), Input)
-
-    delta_Hidden = mat.multiply(1 / totalExample, delta_Hidden)
 
     # regularization
     # extract weights for regularization from Dictionary since we are not going to regularize the bias weights
