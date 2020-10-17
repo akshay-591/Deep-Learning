@@ -29,23 +29,22 @@ Y_test = data['Y_test']
 print("================================== Debugging at lambda = 0==================")
 DebugOptimizationFun.debug(InputUnits=6,
                            OutputUnits=4,
-                           numHiddenLayer=1,
-                           HiddenLayerUnits=5,
+                           numHiddenLayer=2,
                            numExample=5,
                            lamb=0)
 
-print("================================== Debugging at lambda = 3 ==================")
+"""print("================================== Debugging at lambda = 3 ==================")
 DebugOptimizationFun.debug(InputUnits=6,
                            OutputUnits=4,
                            numHiddenLayer=1,
                            HiddenLayerUnits=5,
                            numExample=5,
-                           lamb=3)
+                           lamb=3)"""
 
 print("==================================== Learning =================================================")
 
 Hidden_layer = 1
-Hidden_layer_neuron = 150
+Hidden_layer_neuron = 90
 input_layer_neurons = X_train.shape[1]  # input layer units
 numClasses = 10  # output layer units
 model = NNLearn.Learn(Input=X_train,
@@ -56,7 +55,7 @@ model = NNLearn.Learn(Input=X_train,
                       OutputLayerUnits=numClasses,
                       numHiddenLayers=Hidden_layer,
                       HiddenLayerUnits=Hidden_layer_neuron,
-                      lamb=1.5)
+                      lamb=1)
 
 
 print("Accuracy on Training set = ", model.accuracy)

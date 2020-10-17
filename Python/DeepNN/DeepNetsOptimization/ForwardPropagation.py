@@ -1,5 +1,5 @@
 """
-This file contain method which will Compute the output using Fast forward propagation
+This file contain method which will Compute the output using Feed forward propagation
 
 """
 import numpy as mat

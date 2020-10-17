@@ -30,7 +30,6 @@ def init(InputUnits, OutputUnits, numHiddenLayer, HiddenUnits=None):
     if numHiddenLayer > 1:
         for i in range(numHiddenLayer):
             if i < numHiddenLayer-1:
-                print(i)
                 parameters = generate(HiddenUnits[i+1], HiddenUnits[i])
                 allWeights = mat.r_[allWeights, parameters.flatten()]
             else:

@@ -6,7 +6,8 @@ import numpy as mat
 from scipy import io
 from matplotlib import pyplot as plt
 import random
-from ProjectCode import Optimization, SigmoidDerivative, WeightInit, Prediction, Learn
+
+from ProjectCode import Optimization, WeightInit, Prediction, Learn
 from DebuggingTools import DebugOptimizationFun
 
 #  load data
@@ -60,8 +61,8 @@ print("\n\n========================== Debugging at Lambda = 3 ==================
 DebugOptimizationFun.debug(3)
 
 # ===================================== Training Neural Network =======================================
-"""
-In neural Network we can not start with same or zero weights because it will give us the same output from all the 
+
+"""In neural Network we can not start with same or zero weights because it will give us the same output from all the 
 units in hidden layer or second layer which is not what we want So it is necessary to initialize the weights randomly to
 achieve non linear hypothesis.
 """
@@ -78,3 +79,5 @@ learned_weight1, learned_weight2 = Learn.start(all_param, 50, X, Y, input_layer_
 prediction, accuracy = Prediction.predict(learned_weight1, learned_weight2,
                                           X, Y, Accuracy=True)
 print("Model Accuracy is = ", accuracy)
+
+
