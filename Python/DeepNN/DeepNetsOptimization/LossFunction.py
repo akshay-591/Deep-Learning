@@ -3,33 +3,40 @@ This file Contains feedForward and BackPropagation method. Which is just like Co
 Neural Network they are called by different name because of their structure and working.
 """
 import numpy as mat
-from DeepNetsOptimization.ForwardPropagation import FFProp
+from DeepNetsOptimization.ForwardPropagation import Feed
 from DeepNetsOptimization.Reshape import reshapeWeights
 
 
-def Loss(param, X, Y, inputUnits, outputUnits, numHiddenLayer, numHiddenUnits, lamb):
-    """
-    This method will calculate the cost/error.
+def Loss(param, X, Y, inputUnits, outputUnits, numHiddenLayer, numHiddenUnits, HiddenActivation, OutputActivation,
+         lamb):
 
+    """
+    This method will calculate the cost/error Using Maximum Likelihood also known as Cross-entropy.
 
     :param param: flat array containing all weights (all layer).
     :param X: Input matrix.
     :param Y: output matrix.
+
     :param inputUnits: Input or initial layer units/Neurons mostly equal to total element of an image or number of
                        features.
     :param outputUnits: Output layer Units/Neuron which is equal to the number of classes.
     :param numHiddenLayer: Number of Hidden layers
     :param numHiddenUnits: Number of of units in the hidden layers. User should send a list Containing the number of
                            units respectively.
+    :param HiddenActivation: Hidden Activation is the Activation Type Which user wants to perform in the
+                                     Hidden Layers ex - ReLu or Sigmoid.
+    :param OutputActivation: OutputActivation is the Activation Type Which user wants to perform in the Output
+                                     Layer. ex- Sigmoid and ReLu.
     :param lamb: Regularization parameters.
     :return: Cost/error .
     """
+
     total_example = X.shape[0]
 
     weights = reshapeWeights(param, inputUnits, outputUnits, numHiddenLayer, numHiddenUnits)
 
     # call FeedForward Propagation and Calculate the outputs
-    Layer_outputs = FFProp(X, weights)
+    FFModel = Feed(X, weights, HiddenActivation, OutputActivation)
 
     # Now Calculate the error between Original Output and the prediction
 
@@ -45,7 +52,7 @@ def Loss(param, X, Y, inputUnits, outputUnits, numHiddenLayer, numHiddenUnits, l
 
     loss0 = mat.zeros((outputUnits, 1))
     loss1 = mat.zeros((outputUnits, 1))
-    output = Layer_outputs['output_layer']
+    output = FFModel.ActivatedOutputs['output_layer']
 
     for i in range(outputUnits):
         new_output = mat.where(Y == i + 1, 1, 0)  # where Y == i replace with 1 and rest of the value to 0
@@ -72,5 +79,3 @@ def Loss(param, X, Y, inputUnits, outputUnits, numHiddenLayer, numHiddenUnits, l
 
     J = loss_final + regularized_value
     return J
-
-

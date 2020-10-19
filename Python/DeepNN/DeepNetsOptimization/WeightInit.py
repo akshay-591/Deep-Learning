@@ -31,7 +31,7 @@ def init(InputUnits, OutputUnits, numHiddenLayer=1, HiddenUnits=None):
 
     if numHiddenLayer > 1:
         for i in range(numHiddenLayer):
-            if i < numHiddenLayer-1:
+            if i < numHiddenLayer - 1:
                 parameters = Compute(HiddenUnit[i], HiddenUnit[i + 1])
                 allWeights = mat.r_[allWeights, parameters.flatten()]
             else:
@@ -54,11 +54,8 @@ def Compute(FirstLayerUnits, nextLayerUnits):
     :param nextLayerUnits: The units in Next Layer
     :return: parameters matrix of dimension of nextLayerUnits*FirstLayerUnits+1
     """
-    e = 0.12  # for making values smaller
-    parameters = mat.random.rand(nextLayerUnits, FirstLayerUnits + 1)
-    # To make algorithm faster it is advisable to take small values of initial weights. To achieve that we will
-    # multiply the weights with 2*e and subtract e It will give us small digits of random weights
-    parameters = mat.multiply(parameters, 2 * e)
-    parameters = mat.subtract(parameters, e)
+
+    n = nextLayerUnits
+    parameters = mat.multiply(mat.random.randn(nextLayerUnits, FirstLayerUnits + 1), mat.sqrt(1 / n))
 
     return parameters

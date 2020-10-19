@@ -10,8 +10,9 @@ from DeepNetsOptimization.LossFunction import Loss
 
 
 class Learn:
-    def __init__(self, Input, Output, AutoParameters=True, param=None, InputLayerUnits=None, OutputLayerUnits=None,
-                 numHiddenLayers=None, HiddenLayerUnits=None, maxIter=None, lamb=None):
+    def __init__(self, Input, Output, HiddenActivation=None, OutputActivation=None, AutoParameters=True, param=None,
+                 InputLayerUnits=None, OutputLayerUnits=None, numHiddenLayers=None, HiddenLayerUnits=None, maxIter=None,
+                 lamb=None):
         """
         This Method will starts the process of learning.
 
@@ -32,6 +33,7 @@ class Learn:
 
         :param HiddenLayerUnits: Number of Hidden Layer units. If Model have More than one one Hidden Layer user the
                                  list and add the number of neurons in that list respectively.
+        :returns: Container.
         """
         if numHiddenLayers is None:
             numHiddenLayers = 1
@@ -39,27 +41,50 @@ class Learn:
             InputLayerUnits = Input.shape[1]  # Take the Column of Input as InputLayerUnits
         if lamb is None:
             lamb = 0
+        if HiddenActivation is None:
+            HiddenActivation = "ReLu"
+        if OutputActivation is None:
+            OutputActivation = "Sigmoid"
         if AutoParameters:
-            param = WeightInit.init(InputLayerUnits, OutputLayerUnits, numHiddenLayers, HiddenLayerUnits)
+            self.initialParam = WeightInit.init(InputLayerUnits, OutputLayerUnits, numHiddenLayers, HiddenLayerUnits)
         else:
-            param = param
+            self.initialParam = param
 
-        # Optimize
-        result = optimize_grad(param=param,
-                               maxiter=maxIter,
-                               args=(Input, Output, InputLayerUnits, OutputLayerUnits,
-                                     numHiddenLayers, HiddenLayerUnits, lamb))
+        self.HiddenActivation = HiddenActivation
+        self.OutputActivation = OutputActivation
+        self.X = Input
         self.Y = Output
-        self.learnedWeights= result.x
+        self.learnedWeights = mat.zeros(self.initialParam.shape)
         self.maxIter = maxIter
         self.InputLayerUnits = InputLayerUnits
         self.OutputLayerUnits = OutputLayerUnits
         self.numHiddenLayers = numHiddenLayers
         self.HiddenLayerUnits = HiddenLayerUnits
-        # Compute Prediction and accuracy
-        prediction, accuracy = Prediction.predict(self, Input, Accuracy=True)
-        self.prediction = prediction
-        self.accuracy = accuracy
+        self.prediction = mat.zeros(Output.shape)
+        self.accuracy = 0
+        self.lamb = lamb
+
+
+def startTraining(Model):
+    """
+    This Method Starts the Training Process.
+
+    :param Model: The Container or object of Learn Class in NNLearn
+    :return: Model Containing Updated Result.
+    """
+    # Optimize
+    result = optimize_grad(param=Model.initialParam,
+                           maxiter=Model.maxIter,
+                           args=(Model.X, Model.Y, Model.InputLayerUnits, Model.OutputLayerUnits, Model.numHiddenLayers,
+                                 Model.HiddenLayerUnits, Model.HiddenActivation, Model.OutputActivation, Model.lamb))
+
+    Model.learnedWeights = result.x
+    # Compute Prediction and accuracy
+    prediction, accuracy = Prediction.predict(Model, Model.X, Accuracy=True)
+    Model.prediction = prediction
+    Model.accuracy = accuracy
+
+    return Model
 
 
 def optimize_grad(param, maxiter=None, args=()):
@@ -78,10 +103,10 @@ def optimize_grad(param, maxiter=None, args=()):
                                    method='CG',
                                    jac=BackProp)
     else:
-       result = optimize.minimize(fun=Loss,
-                               x0=param,
-                               args=args,
-                               method='CG',
-                               jac=BackProp,
-                               options={'maxiter': maxiter})
+        result = optimize.minimize(fun=Loss,
+                                   x0=param,
+                                   args=args,
+                                   method='CG',
+                                   jac=BackProp,
+                                   options={'maxiter': maxiter})
     return result

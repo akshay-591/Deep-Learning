@@ -3,7 +3,7 @@ This file contains Method which will compute the prediction in form of original 
 and model accuracy if user wants.
 """
 import numpy as mat
-from DeepNetsOptimization import LossFunction, Reshape
+from DeepNetsOptimization import ForwardPropagation, Reshape
 
 
 def predict(model, X, Y=None, Accuracy=False):
@@ -23,8 +23,8 @@ def predict(model, X, Y=None, Accuracy=False):
                                              model.OutputLayerUnits, model.numHiddenLayers,
                                              model.HiddenLayerUnits)
 
-    Layers_output = LossFunction.FFProp(X, reshped_weights)
-    Output_layer = Layers_output['output_layer']
+    FFmodel = ForwardPropagation.Feed(X, reshped_weights, model.HiddenActivation,model.OutputActivation)
+    Output_layer = FFmodel.ActivatedOutputs['output_layer']
     prediction = mat.argmax(Output_layer, axis=1) + 1  # add one because we have label from 1 to 10 but argument or max
     # index we will get will be from 0 to 9 so if original output is 10 we will get 9 That will give the wrong
     # Prediction and 0 accuracy.

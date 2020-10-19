@@ -3,23 +3,27 @@
 import numpy as mat
 
 
-def predict(x, theta, Sigmoid=False):
+def predict(x, theta, Activation=None):
     """
-    This method calculate prediction for the Model
+    This method calculate prediction for the Model.
 
-    :param x: input parameters
-    :param theta: weight parameters
-    :param Sigmoid: True means the prediction will be passed through a sigmoid function false just dot a product will
-                    be calculated.
-    :return: prediction
-
+    :param Activation: Activation Function ReLu and Sigmoid.
+    :param x: input parameters.
+    :param theta: weight parameters.
+    :return: prediction.
     """
+
     # calculating prediction
+    global ActivationPrediction
     if theta.shape[0] != x.shape[1] and theta.shape[1] == x.shape[1]:
         prediction = mat.dot(x, theta.transpose())
     else:
         prediction = mat.dot(x, theta)
-    if Sigmoid:
-        prediction = mat.divide(1, mat.add(1, mat.exp(-prediction)))
-
-    return prediction
+    if Activation is None:
+        print("None")
+        return prediction
+    if Activation == "Sigmoid":
+        ActivationPrediction = mat.divide(1, mat.add(1, mat.exp(-prediction)))
+    if Activation == "ReLu":
+        ActivationPrediction = mat.where(prediction <=0, 0, prediction)
+    return prediction, ActivationPrediction

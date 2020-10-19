@@ -7,12 +7,16 @@ from DebuggingTools import WeightsDebug, TestNumericalGradient
 from DeepNetsOptimization import LossFunction, BackPropagation
 
 
-def debug(InputUnits=None, OutputUnits=None, numHiddenLayer=None, HiddenLayerUnits=None, numExample=None, lamb=None):
+def debug(HiddenActivation, OutputActivation, InputUnits=None, OutputUnits=None, numHiddenLayer=None, HiddenLayerUnits=None, numExample=None,
+          lamb=None):
     """
     This method will generate some random data and and Calculate Gradients or Derivative of Function Numerically and
     Analytical both.User either Can feed in there Input for Generating random data or Use the default values.This
     Methods are designed in a way that Input matrix have Examples in row and features in Columns.
 
+    :param HiddenActivation:
+    :param OutputActivation:
+    :param Activation: The Activation Function For ex- ReLu or Sigmoid.
     :param InputUnits: Number of Units in Input Layer. By default it is 6.
     :param OutputUnits: Number of Classes or Number of Units in Output Layer.By default it is 5.
     :param numHiddenLayer: Number of Hidden Layers.By default it is 1.
@@ -24,6 +28,10 @@ def debug(InputUnits=None, OutputUnits=None, numHiddenLayer=None, HiddenLayerUni
     """
 
     # Check and define some parameters for Random Data
+    if HiddenActivation is None:
+        HiddenActivation = "ReLu"
+    if OutputActivation is None:
+        OutputActivation = "Sigmoid"
     if numHiddenLayer is None:
         numHiddenLayer = 1
     if InputUnits is None:
@@ -52,12 +60,11 @@ def debug(InputUnits=None, OutputUnits=None, numHiddenLayer=None, HiddenLayerUni
     numerical_values = TestNumericalGradient.NumGrad(function=LossFunction.Loss,
                                                      theta=param,
                                                      parameters=(X, Y, InputUnits, OutputUnits, numHiddenLayer,
-                                                                 HiddenLayerUnits, lamb))
+                                                                 HiddenLayerUnits, HiddenActivation,OutputActivation, lamb))
 
     # Calculates Analytical gradients
-
     Analytical_values = BackPropagation.BackProp(param, X, Y, InputUnits, OutputUnits, numHiddenLayer, HiddenLayerUnits,
-                                                 lamb)
+                                                 HiddenActivation,OutputActivation, lamb)
 
     # calculate difference
     mat_a = mat.subtract(numerical_values, Analytical_values)
@@ -65,7 +72,6 @@ def debug(InputUnits=None, OutputUnits=None, numHiddenLayer=None, HiddenLayerUni
     # calculate norm
     diff = mat.linalg.norm(mat_a) / mat.linalg.norm(mat_b)
 
-    # print the values
     print("\nNumerical Calculated Gradients = \n", numerical_values)
     print("\nAnalytical Calculated Gradients = \n", Analytical_values)
     print("\ndifference = ", diff)

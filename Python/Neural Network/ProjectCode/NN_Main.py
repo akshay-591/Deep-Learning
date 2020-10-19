@@ -7,6 +7,7 @@ from scipy import io
 from matplotlib import pyplot as plt
 import random
 
+from DeepNetsOptimization import NNLearn
 from ProjectCode import Optimization, WeightInit, Prediction, Learn
 from DebuggingTools import DebugOptimizationFun
 
@@ -15,7 +16,7 @@ data = io.loadmat('../Data/trainSet.mat')
 
 X = data['X']
 Y = data['y']
-
+print(Y)
 # lets first choose the number of neuron we should use in Hidden layer using cross validation set
 # we are going to take a difference between the units of 10.
 Hidden_layer_neuron = 25
@@ -33,7 +34,7 @@ for i, ax in enumerate(axes.flat):
 
     ax.imshow(im.transpose(), 'gray')
 
-plt.show()
+#plt.show()
 
 # ===================================== Learning ====================================
 # loading pre-initialized parameters
@@ -66,7 +67,7 @@ DebugOptimizationFun.debug(3)
 units in hidden layer or second layer which is not what we want So it is necessary to initialize the weights randomly to
 achieve non linear hypothesis.
 """
-# for input layers
+"""# for input layers
 weights1 = WeightInit.init(input_layer_neurons, Hidden_layer_neuron)
 # for Hidden layer
 weights2 = WeightInit.init(Hidden_layer_neuron, numClasses)
@@ -79,3 +80,25 @@ learned_weight1, learned_weight2 = Learn.start(all_param, 50, X, Y, input_layer_
 prediction, accuracy = Prediction.predict(learned_weight1, learned_weight2,
                                           X, Y, Accuracy=True)
 print("Model Accuracy is = ", accuracy)
+"""
+
+Hidden_layer = 1
+Hidden_layer_neuron = 25
+input_layer_neurons = X.shape[1]  # input layer units
+numClasses = 10  # output layer units
+print(X[20, :])
+model = NNLearn.Learn(Input=X,
+                      Output=Y,
+                      AutoParameters=True,
+                      maxIter=50,
+                      InputLayerUnits=input_layer_neurons,
+                      OutputLayerUnits=numClasses,
+                      numHiddenLayers=Hidden_layer,
+                      HiddenLayerUnits=Hidden_layer_neuron,
+                      HiddenActivation="ReLu",
+                      OutputActivation="Sigmoid",
+                      lamb=1)
+
+model = NNLearn.startTraining(model)
+
+print("Accuracy on Training set = ", model.accuracy)
