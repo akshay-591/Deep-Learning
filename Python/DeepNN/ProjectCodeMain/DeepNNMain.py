@@ -47,6 +47,7 @@ Hidden_layer = 1
 Hidden_layer_neuron = 50
 input_layer_neurons = X_train.shape[1]  # input layer units
 numClasses = 10  # output layer units
+
 model = NNLearn.Learn(Input=X_scale_train,
                       Output=Y_train,
                       AutoParameters=True,
