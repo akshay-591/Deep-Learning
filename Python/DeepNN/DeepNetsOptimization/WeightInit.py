@@ -1,7 +1,7 @@
 """
 This file will Initialize Weights randomly different for each unit/Neurons of different layers.
 """
-
+,
 import numpy as mat
 
 
